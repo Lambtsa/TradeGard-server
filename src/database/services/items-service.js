@@ -2,6 +2,8 @@ const Item = require('../schemas/item');
 
 const getAllItems = () => Item.find();
 
+const getItemById = id => Item.findById(id);
+
 const createItem = itemObj => new Item({
   itemTitle: itemObj.itemTitle,
   itemDescription: itemObj.itemDescription,
@@ -10,4 +12,8 @@ const createItem = itemObj => new Item({
   itemOwner: itemObj.itemOwner,
 }).save();
 
-module.exports = { createItem, getAllItems };
+module.exports = {
+  createItem,
+  getAllItems,
+  getItemById,
+};
