@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 
+// routes
+const api = require('./src/routes');
+
 const app = express();
 
 app.use(express.json());
@@ -9,10 +12,7 @@ const allowedOrigin = 'http://localhost:3000';
 
 app.use(cors({ origin: allowedOrigin }));
 
-/* eslint-disable-next-line */
-app.get('/', (req, res, next) => {
-  res.send('Hello');
-});
+app.use('/api', api);
 
 /* eslint-disable-next-line */
 app.use((req, res, next) => {

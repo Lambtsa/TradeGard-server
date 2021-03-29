@@ -1,9 +1,10 @@
 require('dotenv').config();
 require('./src/database/connect_db.js');
+const { populateDatabase } = require('./src/database/mock/mockItems.js');
 
 if (process.env.NODE_ENV === 'development') {
-  require('./src/database/mock/mockItems.js');
-};
+  populateDatabase();
+}
 
 const app = require('./app');
 

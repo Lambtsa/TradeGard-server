@@ -10,7 +10,7 @@ const itemSchema = new mongoose.Schema({
     required: [true, 'The item category is required'],
   },
   itemOwner: { type: String, required: [true, 'Owner ID is required'] },
-  itemLikes: { type: [String] }
+  itemLikes: { type: [String] },
 });
 
 module.exports = mongoose.model('items', itemSchema);
