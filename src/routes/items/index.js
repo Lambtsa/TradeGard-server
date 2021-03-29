@@ -1,5 +1,10 @@
 const router = require('express').Router();
-const { getAllItems, getItemById, getItemsByCategory } = require('../../database/services/items-service');
+const {
+  getAllItems,
+  getItemById,
+  getItemsByCategory,
+  createItem,
+} = require('../../database/services/items-service');
 
 router.get('/', async (req, res, next) => {
   try {
@@ -26,6 +31,23 @@ router.get('/:id', async (req, res, next) => {
     res.json(item);
   } catch (err) {
     err.statusCode = 404;
+    next(err);
+  }
+});
+
+router.post('/', async (req, res, next) => {
+  try {
+    const { item } = req.body;
+    if (!item) {
+      const error = new Error('Missing "item" property!');
+      error.statusCode = 400;
+      throw error;
+    }
+    const newItem = await createItem(item);
+    res
+      .status(201)
+      .json(newItem);
+  } catch (err) {
     next(err);
   }
 });
