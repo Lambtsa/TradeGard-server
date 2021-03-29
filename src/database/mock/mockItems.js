@@ -5,21 +5,21 @@ const mockObjects = [{
   itemTitle: 'desk',
   itemDescription: 'a very beautiful desk',
   itemImages: ['https://unsplash.com/photos/3d4sSUChunA'],
-  itemCategory: 'Furniture',
+  itemCategory: 'furniture',
   itemOwner: 'Mina',
 },
 {
   itemTitle: 'Harry Potter',
   itemDescription: 'old version of Harry Potter',
   itemImages: ['https://unsplash.com/photos/CXYPfveiuis', 'https://unsplash.com/photos/xY55bL5mZAM'],
-  itemCategory: 'Books',
+  itemCategory: 'books',
   itemOwner: 'Oscar',
 },
 {
   itemTitle: 'jacket',
   itemDescription: 'nice jacket',
   itemImages: ['https://unsplash.com/photos/opJElA_rBNw'],
-  itemCategory: 'Clothes',
+  itemCategory: 'clothes',
   itemOwner: 'Tom',
 }];
 

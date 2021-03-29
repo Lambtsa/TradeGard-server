@@ -1,10 +1,16 @@
 const router = require('express').Router();
-const { getAllItems, getItemById } = require('../../database/services/items-service');
+const { getAllItems, getItemById, getItemsByCategory } = require('../../database/services/items-service');
 
 router.get('/', async (req, res, next) => {
   try {
-    const items = await getAllItems();
-    res.json(items);
+    const { category } = req.query;
+    if (category) {
+      const items = await getItemsByCategory(category);
+      res.json(items);
+    } else {
+      const items = await getAllItems();
+      res.json(items);
+    }
   } catch (error) {
     next(error);
   }
