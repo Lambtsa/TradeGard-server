@@ -7,7 +7,7 @@ const oktaJwtVerifier = new OktaJwtVerifier({
 });
 
 const authenticationRequired = (req, res, next) => {
-  const authHeader = req.headers.authorization || '';
+  const authHeader = req.headers.authorization || '';
   const match = authHeader.match(/Bearer (.+)/);
   if (!match) {
     // look over error handling
@@ -27,7 +27,7 @@ const authenticationRequired = (req, res, next) => {
     .catch(err => {
       // look over error handling
       res.status(401).send(err.message);
-    })
+    });
 };
 
 module.exports = { authenticationRequired };
