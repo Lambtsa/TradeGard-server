@@ -15,7 +15,7 @@ router.post('/', async (req, res, next) => {
       const err = new Error('Display name already exists!');
       err.statusCode = 400;
       return next(err);
-    };
+    }
     const oktaUser = {
       profile: {
         firstName: newUser.userFirstName,

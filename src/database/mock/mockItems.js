@@ -27,6 +27,7 @@ const mockObjects = [{
   itemOwner: 'Tom',
 }];
 
+/* eslint-disable no-console */
 const populateDatabase = async () => {
   await Item.deleteMany();
   await Promise.all(mockObjects.map(createItem));

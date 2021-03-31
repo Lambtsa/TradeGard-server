@@ -4,7 +4,6 @@ const createUser = (userDisplayName, userId) => new User({ userDisplayName, user
 
 const findUserByDisplayName = userDisplayName => User.find({ userDisplayName });
 
-
 module.exports = {
   createUser,
   findUserByDisplayName,
