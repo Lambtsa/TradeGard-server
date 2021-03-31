@@ -34,7 +34,6 @@ router.post('/', async (req, res, next) => {
         },
       },
     };
-    // post to okta
     const response = await fetch(process.env.OKTA_API_PATH, {
       method: 'POST',
       headers: {
@@ -43,7 +42,6 @@ router.post('/', async (req, res, next) => {
       },
       body: JSON.stringify(oktaUser),
     });
-    console.log(response.ok);
     if (!response.ok) {
       const badResponse = await response.json();
       const err = new Error(badResponse.errorCauses[0].errorSummary);
@@ -52,7 +50,9 @@ router.post('/', async (req, res, next) => {
     }
     const data = await response.json();
     await createUser(newUser.userDisplayName, data.id);
-    console.log(data.id);
+    /*
+      Should we return the user created here?
+    */
     return res
       .status(201)
       .send('resource created');
