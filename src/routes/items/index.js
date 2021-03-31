@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { authenticationRequired } = require('../../authentication/authentication-service');
 const {
   getAllItems,
   getItemById,
@@ -35,7 +36,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', authenticationRequired, async (req, res, next) => {
   try {
     const { item } = req.body;
     if (!item) {
