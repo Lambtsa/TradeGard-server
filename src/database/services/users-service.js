@@ -1,5 +1,11 @@
 const User = require('../schemas/user');
 
-const createUser = userDisplayName => new User({ userDisplayName }).save();
+const createUser = (userDisplayName, userId) => new User({ userDisplayName, userId }).save();
 
-module.exports = { createUser };
+const findUserByDisplayName = userDisplayName => User.find({ userDisplayName });
+
+
+module.exports = {
+  createUser,
+  findUserByDisplayName,
+};
