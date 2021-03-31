@@ -10,6 +10,11 @@ router.post('/', async (req, res, next) => {
   };
   try {
     const newUser = req.body.user;
+    /*
+    1. Search for user first to see if display name is already used
+    2. Then create okta user
+    3. then create DB user if okta is good
+    */
     await createUser(newUser.userDisplayName);
     const oktaUser = {
       profile: {
