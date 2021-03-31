@@ -39,6 +39,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', authenticationRequired, async (req, res, next) => {
   try {
     const { item } = req.body;
+    item.itemOwner = req.jwt.claims.uid;
     if (!item) {
       const error = new Error('Missing "item" property!');
       error.statusCode = 400;
