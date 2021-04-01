@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { authenticationRequired } = require('../../authentication/authentication-service');
+const { getContactDetails } = require('../../database/services/users-service');
 const {
   getAllItems,
   getItemById,
@@ -29,7 +30,22 @@ router.get('/:id', async (req, res, next) => {
     if (item === null) {
       throw new Error(`The item with the id:${id} does not exist`);
     }
-    res.json(item);
+    const response = await getContactDetails(item.itemOwner);
+    const contactDetails = await response.json();
+    const responseObj= {
+      itemCategory: item.itemCategory,
+      itemCreationDateUTC: item.itemCreationDateUTC,
+      itemDescription: item.itemDescription,
+      itemTitle: item.itemTitle,
+      itemOwner: {
+        userDisplayName: contactDetails.profile.nickName,
+        userEmail: contactDetails.profile.email,
+        userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
+      },
+      itemLikes: item.itemLikes,
+      itemImages: item.itemImages,
+    };
+    res.json(responseObj);
   } catch (err) {
     err.statusCode = 404;
     next(err);
