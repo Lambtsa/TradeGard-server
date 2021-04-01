@@ -32,7 +32,7 @@ router.get('/:id', async (req, res, next) => {
     }
     const response = await getContactDetails(item.itemOwner);
     const contactDetails = await response.json();
-    const responseObj= {
+    const responseObj = {
       itemCategory: item.itemCategory,
       itemCreationDateUTC: item.itemCreationDateUTC,
       itemDescription: item.itemDescription,
