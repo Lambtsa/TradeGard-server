@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { authenticationRequired, authenticateUser } = require('../../authentication/authentication-service');
-const { getContactDetails } = require('../../database/services/users-service');
+const { getContactDetails, getUserLikes } = require('../../database/services/users-service');
+const { addLike, removeLike } = require('../../database/services/likes-service');
 const {
   getAllItems,
   getItemById,
@@ -10,13 +11,24 @@ const {
 
 router.get('/', authenticateUser, async (req, res, next) => {
   try {
+    let userLikedItems = [];
     const { category } = req.query;
+    if (req.jwt) {
+      const retrievedLikes = await getUserLikes(req.jwt.claims.uid);
+      userLikedItems = retrievedLikes;
+    }
     if (category) {
-      const items = await getItemsByCategory(category);
-      res.json(items);
+      const allItems = await getItemsByCategory(category);
+      res.json({
+        items: allItems,
+        userLikedItems,
+      });
     } else {
-      const items = await getAllItems();
-      res.json(items);
+      const allItems = await getAllItems();
+      res.json({
+        items: allItems,
+        userLikedItems,
+      });
     }
   } catch (error) {
     next(error);
@@ -51,6 +63,24 @@ router.get('/:id', async (req, res, next) => {
     next(err);
   }
 });
+
+router.put('/:id', authenticationRequired, async (req, res, next) => {
+  const { id } = req.params;
+  const { isLiked } = req.body;
+  const userId = req.jwt.claims.uid;
+  try {
+    if (isLiked) {
+      await addLike(id, userId);
+      res.status(204).end();
+    } else {
+      await removeLike(id, userId);
+      res.status(204).end();
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 router.post('/', authenticationRequired, async (req, res, next) => {
   try {

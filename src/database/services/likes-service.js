@@ -3,8 +3,8 @@ const User = require('../schemas/user');
 
 const addLike = async (itemId, userId) => {
   try {
-    const item = await Item.findById(itemId);
-    const user = await User.findById(userId);
+    const item = await Item.findOne({ _id: itemId});
+    const user = await User.findOne({ userId });
     if (item === null || user === null) {
       throw new Error("Item or User does not exist");
     }
@@ -18,10 +18,10 @@ const addLike = async (itemId, userId) => {
   }
 }
 
-const removeLike = (itemId, userId) => {
+const removeLike = async (itemId, userId) => {
   try {
-    const item = await Item.findById(itemId);
-    const user = await User.findById(userId);
+    const item = await Item.findOne({ _id: itemId});
+    const user = await User.findOne({ userId });
     if (item === null || user === null) {
       throw new Error("Item or User does not exist");
     }

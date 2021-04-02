@@ -13,8 +13,11 @@ const getContactDetails = id => fetch(`${process.env.OKTA_API_PATH}/${id}`, {
   },
 });
 
+const getUserLikes = userId => User.findOne({ userId }).then(user => user.userLikedItems);
+ 
 module.exports = {
   createUser,
   findUserByDisplayName,
   getContactDetails,
+  getUserLikes,
 };
