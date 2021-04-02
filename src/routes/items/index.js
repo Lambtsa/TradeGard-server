@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { authenticationRequired } = require('../../authentication/authentication-service');
+const { authenticationRequired, authenticateUser } = require('../../authentication/authentication-service');
 const { getContactDetails } = require('../../database/services/users-service');
 const {
   getAllItems,
@@ -8,7 +8,7 @@ const {
   createItem,
 } = require('../../database/services/items-service');
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateUser, async (req, res, next) => {
   try {
     const { category } = req.query;
     if (category) {
@@ -71,3 +71,13 @@ router.post('/', authenticationRequired, async (req, res, next) => {
 });
 
 module.exports = router;
+
+
+/*
+  1. Create a route that returns all of a users likes (item ids);
+  - normal list of items, all info
+  - array of your own likes
+  2. create a service function for adding and removing likes
+    store user likes on item and item ids on users
+
+*/

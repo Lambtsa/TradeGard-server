@@ -29,4 +29,25 @@ const authenticationRequired = (req, res, next) => {
     });
 };
 
-module.exports = { authenticationRequired };
+const authenticateUser = (req, res, next) => {
+  const authHeader = req.headers.authorization || '';
+  const match = authHeader.match(/Bearer (.+)/);
+  if (!match) {
+    req.jwt = false;
+    return next();
+  }
+  const accessToken = match[1];
+  const audience = 'api://default';
+
+  return oktaJwtVerifier.verifyAccessToken(accessToken, audience)
+    .then(jwt => {
+      req.jwt = jwt;
+      next();
+    })
+    .catch(() => {
+      req.jwt = false;
+      next();
+    });
+};
+
+module.exports = { authenticationRequired, authenticateUser };
