@@ -8,6 +8,11 @@ const addLike = async (itemId, userId) => {
     if (item === null || user === null) {
       throw new Error("Item or User does not exist");
     }
+
+    if (user.userLikedItems.includes(itemId)) {
+      throw new Error("Item already liked");
+    }
+
     item.itemLikes = [...item.itemLikes, userId];
     await item.save();
     user.userLikedItems = [...user.userLikedItems, itemId];
