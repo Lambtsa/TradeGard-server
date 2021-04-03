@@ -1,5 +1,5 @@
-const User = require('../schemas/user');
 const fetch = require('node-fetch');
+const User = require('../schemas/user');
 
 const createUser = (userDisplayName, userId) => new User({ userDisplayName, userId }).save();
 
@@ -14,7 +14,7 @@ const getContactDetails = id => fetch(`${process.env.OKTA_API_PATH}/${id}`, {
 });
 
 const getUserLikes = userId => User.findOne({ userId }).then(user => user.userLikedItems);
- 
+
 module.exports = {
   createUser,
   findUserByDisplayName,

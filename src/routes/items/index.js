@@ -81,7 +81,6 @@ router.put('/:id', authenticationRequired, async (req, res, next) => {
   }
 });
 
-
 router.post('/', authenticationRequired, async (req, res, next) => {
   try {
     const { item } = req.body;
@@ -101,13 +100,3 @@ router.post('/', authenticationRequired, async (req, res, next) => {
 });
 
 module.exports = router;
-
-
-/*
-  1. Create a route that returns all of a users likes (item ids);
-  - normal list of items, all info
-  - array of your own likes
-  2. create a service function for adding and removing likes
-    store user likes on item and item ids on users
-
-*/
