@@ -1,5 +1,7 @@
 const router = require('express').Router();
-const { authenticationRequired } = require('../../authentication/authentication-service');
+const { authenticationRequired, authenticateUser } = require('../../authentication/authentication-service');
+const { getContactDetails, getUserLikes } = require('../../database/services/users-service');
+const { addLike, removeLike } = require('../../database/services/likes-service');
 const {
   getAllItems,
   getItemById,
@@ -7,15 +9,26 @@ const {
   createItem,
 } = require('../../database/services/items-service');
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateUser, async (req, res, next) => {
   try {
+    let userLikedItems = [];
     const { category } = req.query;
+    if (req.jwt) {
+      const retrievedLikes = await getUserLikes(req.jwt.claims.uid);
+      userLikedItems = retrievedLikes;
+    }
     if (category) {
-      const items = await getItemsByCategory(category);
-      res.json(items);
+      const allItems = await getItemsByCategory(category);
+      res.json({
+        items: allItems,
+        userLikedItems,
+      });
     } else {
-      const items = await getAllItems();
-      res.json(items);
+      const allItems = await getAllItems();
+      res.json({
+        items: allItems,
+        userLikedItems,
+      });
     }
   } catch (error) {
     next(error);
@@ -29,9 +42,41 @@ router.get('/:id', async (req, res, next) => {
     if (item === null) {
       throw new Error(`The item with the id:${id} does not exist`);
     }
-    res.json(item);
+    const response = await getContactDetails(item.itemOwner);
+    const contactDetails = await response.json();
+    const responseObj = {
+      itemCategory: item.itemCategory,
+      itemCreationDateUTC: item.itemCreationDateUTC,
+      itemDescription: item.itemDescription,
+      itemTitle: item.itemTitle,
+      itemOwner: {
+        userDisplayName: contactDetails.profile.nickName,
+        userEmail: contactDetails.profile.email,
+        userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
+      },
+      itemLikes: item.itemLikes,
+      itemImages: item.itemImages,
+    };
+    res.json(responseObj);
   } catch (err) {
     err.statusCode = 404;
+    next(err);
+  }
+});
+
+router.put('/:id', authenticationRequired, async (req, res, next) => {
+  const { id } = req.params;
+  const { isLiked } = req.body;
+  const userId = req.jwt.claims.uid;
+  try {
+    if (isLiked) {
+      await addLike(id, userId);
+      res.status(204).end();
+    } else {
+      await removeLike(id, userId);
+      res.status(204).end();
+    }
+  } catch (err) {
     next(err);
   }
 });
