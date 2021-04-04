@@ -52,7 +52,7 @@ const mockObjects = [{
   ],
   itemCategory: 'hobbies',
   itemOwner: '00uhgcoq6XAUBJJ2r5d6',
-}
+},
 ];
 
 /* eslint-disable no-console */
