@@ -7,7 +7,7 @@ const itemSchema = new mongoose.Schema({
   itemImages: { type: [String], validate: v => Array.isArray(v) && v.length > 0 },
   itemCategory: {
     type: String,
-    enum: ['books', 'clothes', 'furniture'],
+    enum: ['books', 'clothes', 'electronics', 'furniture', 'hobbies'],
     required: [true, 'The item category is required'],
   },
   itemOwner: { type: String, required: [true, 'Owner ID is required'] },
