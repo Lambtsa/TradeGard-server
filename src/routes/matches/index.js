@@ -11,60 +11,46 @@ router.get('/', authenticationRequired, async (req, res, next) => {
       const likedItemObject = await getItemById(like);
       return likedItemObject.itemOwner;
     }));
+    const filteredOwnersList = likedItemsOwners
+      .filter((value, index) => likedItemsOwners.indexOf(value) === index)
+      .filter(value => value !== uid);
+    console.log(filteredOwnersList);
 
     const authenticatedUserItems = await getItemsByUserId(uid);
     const authenticatedUserItemsIds = authenticatedUserItems.map(item => item._id.toString());
 
-    const authenticatedUserMatches = await Promise.all(likedItemsOwners.map(async itemOwner => {
+    const authenticatedUserMatches = await Promise.all(filteredOwnersList.map(async itemOwner => {
       const itemOwnerLikes = await getUserLikes(itemOwner);
-      
-      let userMatch = false;
+
+      let likeCount = 0;
       itemOwnerLikes.forEach(like => {
         if (authenticatedUserItemsIds.includes(like)) {
-          userMatch = true;
+          likeCount += 1;
         }
-      })
+      });
       return {
         id: itemOwner,
-        matched: userMatch,
+        likes: likeCount,
       }
     }));
-    const filteredUserMatches = authenticatedUserMatches.filter(match => match.matched);
+    const filteredUserMatches = authenticatedUserMatches.filter(match => match.likes > 0);
     const matchesWithDetails = await Promise.all(filteredUserMatches.map(async userMatch => {
       const response = await getContactDetails(userMatch.id);
       const contactDetails = await response.json();
       const matchObj = {
+        userLikeCount: userMatch.likes,
         userDisplayName: contactDetails.profile.nickName,
         userEmail: contactDetails.profile.email,
         userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
       };
       return matchObj;
     }));
+    console.log(matchesWithDetails);
     res.json(matchesWithDetails);
   } catch (err) {
     err.statusCode = 400;
     next(err);
   }
 });
-
-/*
-  Lets say Melinda is authenticated User.
-  Melinda likes 3 items => [itemID1, itemID2, itemID3].
-
-  Melinda has published the following items => [MelindaItemID1, MelindaItemID2]
-
-  Who owns the items that Melinda likes? 
-  new array => [ownerID1, ownerID2, ownerID3]
-
-  We need to see whether inside any of Melindas items any of the owners liked them.
-
-  {
-    matchedDisplayName: 'Dave 192',
-  }
-
-  1. get id of auth user (jwt)
-  2. get the array of items the request user has liked (getUserLikes)
-  3. 
-*/
 
 module.exports = router;
