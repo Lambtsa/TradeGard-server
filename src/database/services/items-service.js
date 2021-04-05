@@ -4,6 +4,8 @@ const getAllItems = () => Item.find();
 
 const getItemById = id => Item.findById(id);
 
+const getItemsByUserId = userId => Item.find({ itemOwner: userId });
+
 const getItemsByCategory = itemCategory => Item.find({ itemCategory: itemCategory.toLowerCase() });
 
 const createItem = itemObj => new Item({
@@ -19,4 +21,5 @@ module.exports = {
   getAllItems,
   getItemById,
   getItemsByCategory,
+  getItemsByUserId,
 };
