@@ -20,7 +20,7 @@ const itemSchema = new mongoose.Schema({
       'phones',
       'services',
       'tools',
-      'vehicules'
+      'vehicules',
     ],
     required: [true, 'The item category is required'],
   },
