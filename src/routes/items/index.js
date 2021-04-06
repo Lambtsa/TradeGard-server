@@ -15,7 +15,7 @@ router.get('/', authenticateUser, async (req, res, next) => {
     let contactDetails;
     if (req.query.userId) {
       items = await getItemsByUserId(req.query.userId);
-      contactDetails = await getContactDetails(req.query.userId).then(res => res.json());
+      contactDetails = await getContactDetails(req.query.userId).then(response => response.json());
     } else {
       items = await getAllItems();
     }

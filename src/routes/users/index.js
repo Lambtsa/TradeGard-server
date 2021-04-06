@@ -11,7 +11,7 @@ router.get('/:id/likes', authenticationRequired, async (req, res, next) => {
     const items = await Promise.all(userLikes.map(getItemById));
     res.json({
       items,
-      userLikedItems: userLikes
+      userLikedItems: userLikes,
     });
   } catch (err) {
     next(err);

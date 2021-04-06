@@ -3,6 +3,7 @@ const { authenticationRequired } = require('../../authentication/authentication-
 const { getUserLikes, getContactDetails } = require('../../database/services/users-service');
 const { getItemById, getItemsByUserId } = require('../../database/services/items-service');
 
+/* eslint-disable */
 router.get('/', authenticationRequired, async (req, res, next) => {
   const { uid } = req.jwt.claims;
   try {
@@ -14,7 +15,6 @@ router.get('/', authenticationRequired, async (req, res, next) => {
     const filteredOwnersList = likedItemsOwners
       .filter((value, index) => likedItemsOwners.indexOf(value) === index)
       .filter(value => value !== uid);
-    console.log(filteredOwnersList);
 
     const authenticatedUserItems = await getItemsByUserId(uid);
     const authenticatedUserItemsIds = authenticatedUserItems.map(item => item._id.toString());
@@ -30,29 +30,29 @@ router.get('/', authenticationRequired, async (req, res, next) => {
           theirLikes.push({
             id: likedObject._id.toString(),
             itemTitle: likedObject.itemTitle,
-          })
+          });
           likeCount += 1;
         }
       });
 
       const theirItemIds = await getItemsByUserId(itemOwner);
-      
+
       const yourLikes = [];
       theirItemIds.forEach(theirThing => {
         if (authenticatedUserlikes.includes(theirThing._id.toString())) {
           yourLikes.push({
             id: theirThing._id.toString(),
             itemTitle: theirThing.itemTitle,
-          })
+          });
         }
-      })
+      });
 
       return {
         id: itemOwner,
         likes: likeCount,
         theirLikes,
         yourLikes,
-      }
+      };
     }));
     const filteredUserMatches = authenticatedUserMatches.filter(match => match.likes > 0);
     const matchesWithDetails = await Promise.all(filteredUserMatches.map(async userMatch => {
