@@ -1,6 +1,22 @@
 const router = require('express').Router();
 const fetch = require('node-fetch');
-const { createUser, findUserByDisplayName } = require('../../database/services/users-service');
+const { createUser, findUserByDisplayName, getUserLikes } = require('../../database/services/users-service');
+const { getItemById } = require('../../database/services/items-service');
+const { authenticationRequired } = require('../../authentication/authentication-service');
+
+router.get('/:id/likes', authenticationRequired, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userLikes = await getUserLikes(id);
+    const items = await Promise.all(userLikes.map(getItemById));
+    res.json({
+      items,
+      userLikedItems: userLikes
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.post('/', async (req, res, next) => {
   if (!req.body.user) {

@@ -59,6 +59,7 @@ router.get('/', authenticationRequired, async (req, res, next) => {
       const response = await getContactDetails(userMatch.id);
       const contactDetails = await response.json();
       const matchObj = {
+        userId: userMatch.id,
         userLikeCount: userMatch.likes,
         userDisplayName: contactDetails.profile.nickName,
         userEmail: contactDetails.profile.email,
@@ -68,8 +69,6 @@ router.get('/', authenticationRequired, async (req, res, next) => {
       };
       return matchObj;
     }));
-    console.log(matchesWithDetails[0].theirLikes);
-    console.log(matchesWithDetails[0].yourLikes);
     res.json(matchesWithDetails);
   } catch (err) {
     err.statusCode = 400;
