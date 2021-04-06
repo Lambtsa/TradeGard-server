@@ -12,8 +12,10 @@ const {
 router.get('/', authenticateUser, async (req, res, next) => {
   try {
     let items;
+    let contactDetails;
     if (req.query.userId) {
       items = await getItemsByUserId(req.query.userId);
+      contactDetails = await getContactDetails(req.query.userId).then(res => res.json());
     } else {
       items = await getAllItems();
     }
@@ -25,6 +27,7 @@ router.get('/', authenticateUser, async (req, res, next) => {
     res.json({
       items,
       userLikedItems,
+      ownerDisplayName: contactDetails ? contactDetails.profile.nickName : '',
     });
   } catch (error) {
     next(error);
