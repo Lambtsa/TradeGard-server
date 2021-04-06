@@ -77,6 +77,7 @@ router.put('/:id', authenticationRequired, async (req, res, next) => {
       res.status(204).end();
     }
   } catch (err) {
+    console.log(err.message);
     next(err);
   }
 });
