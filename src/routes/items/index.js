@@ -5,31 +5,27 @@ const { addLike, removeLike } = require('../../database/services/likes-service')
 const {
   getAllItems,
   getItemById,
-  getItemsByCategory,
   createItem,
+  getItemsByUserId,
 } = require('../../database/services/items-service');
 
 router.get('/', authenticateUser, async (req, res, next) => {
   try {
+    let items;
+    if (req.query.userId) {
+      items = await getItemsByUserId(req.query.userId);
+    } else {
+      items = await getAllItems();
+    }
     let userLikedItems = [];
-    const { category } = req.query;
     if (req.jwt) {
       const retrievedLikes = await getUserLikes(req.jwt.claims.uid);
       userLikedItems = retrievedLikes;
     }
-    if (category) {
-      const allItems = await getItemsByCategory(category);
-      res.json({
-        items: allItems,
-        userLikedItems,
-      });
-    } else {
-      const allItems = await getAllItems();
-      res.json({
-        items: allItems,
-        userLikedItems,
-      });
-    }
+    res.json({
+      items,
+      userLikedItems,
+    });
   } catch (error) {
     next(error);
   }
