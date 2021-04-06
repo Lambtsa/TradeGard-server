@@ -23,14 +23,35 @@ router.get('/', authenticationRequired, async (req, res, next) => {
       const itemOwnerLikes = await getUserLikes(itemOwner);
 
       let likeCount = 0;
+      const theirLikes = [];
       itemOwnerLikes.forEach(like => {
         if (authenticatedUserItemsIds.includes(like)) {
+          const likedObject = authenticatedUserItems.find(item => item._id.toString() === like);
+          theirLikes.push({
+            id: likedObject._id.toString(),
+            itemTitle: likedObject.itemTitle,
+          })
           likeCount += 1;
         }
       });
+
+      const theirItemIds = await getItemsByUserId(itemOwner);
+      
+      const yourLikes = [];
+      theirItemIds.forEach(theirThing => {
+        if (authenticatedUserlikes.includes(theirThing._id.toString())) {
+          yourLikes.push({
+            id: theirThing._id.toString(),
+            itemTitle: theirThing.itemTitle,
+          })
+        }
+      })
+
       return {
         id: itemOwner,
         likes: likeCount,
+        theirLikes,
+        yourLikes,
       }
     }));
     const filteredUserMatches = authenticatedUserMatches.filter(match => match.likes > 0);
@@ -42,10 +63,13 @@ router.get('/', authenticationRequired, async (req, res, next) => {
         userDisplayName: contactDetails.profile.nickName,
         userEmail: contactDetails.profile.email,
         userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
+        theirLikes: userMatch.theirLikes,
+        yourLikes: userMatch.yourLikes,
       };
       return matchObj;
     }));
-    console.log(matchesWithDetails);
+    console.log(matchesWithDetails[0].theirLikes);
+    console.log(matchesWithDetails[0].yourLikes);
     res.json(matchesWithDetails);
   } catch (err) {
     err.statusCode = 400;
