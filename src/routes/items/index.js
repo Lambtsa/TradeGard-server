@@ -34,28 +34,33 @@ router.get('/', authenticateUser, async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', authenticateUser, async (req, res, next) => {
   try {
     const { id } = req.params;
     const item = await getItemById(id);
     if (item === null) {
       throw new Error(`The item with the id:${id} does not exist`);
     }
-    const response = await getContactDetails(item.itemOwner);
-    const contactDetails = await response.json();
+    let userLikedItems = [];
+    if (req.jwt) {
+      const retrievedLikes = await getUserLikes(req.jwt.claims.uid);
+      userLikedItems = retrievedLikes;
+    }
+    const itemOwnerResponse = await getContactDetails(item.itemOwner);
+    const contactDetails = await itemOwnerResponse.json();
     const responseObj = {
       itemCategory: item.itemCategory,
       itemCreationDateUTC: item.itemCreationDateUTC,
       itemDescription: item.itemDescription,
       itemTitle: item.itemTitle,
       itemOwner: {
-        userId: contactDetails.id,
         userDisplayName: contactDetails.profile.nickName,
         userEmail: contactDetails.profile.email,
         userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
       },
       itemLikes: item.itemLikes,
       itemImages: item.itemImages,
+      userLikedItems,
     };
     res.json(responseObj);
   } catch (err) {
