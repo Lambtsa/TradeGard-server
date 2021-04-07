@@ -50,6 +50,7 @@ router.get('/:id', authenticateUser, async (req, res, next) => {
     const contactDetails = await itemOwnerResponse.json();
     const responseObj = {
       itemCategory: item.itemCategory,
+      itemLocation: item.itemLocation,
       itemCreationDateUTC: item.itemCreationDateUTC,
       itemDescription: item.itemDescription,
       itemTitle: item.itemTitle,

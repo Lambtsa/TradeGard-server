@@ -11,6 +11,7 @@ const createItem = itemObj => new Item({
   itemDescription: itemObj.itemDescription,
   itemImages: itemObj.itemImages,
   itemCategory: itemObj.itemCategory,
+  itemLocation: itemObj.itemLocation,
   itemOwner: itemObj.itemOwner,
 }).save();
 
