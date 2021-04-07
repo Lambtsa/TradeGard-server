@@ -54,6 +54,7 @@ router.get('/:id', authenticateUser, async (req, res, next) => {
       itemDescription: item.itemDescription,
       itemTitle: item.itemTitle,
       itemOwner: {
+        userId: contactDetails.id,
         userDisplayName: contactDetails.profile.nickName,
         userEmail: contactDetails.profile.email,
         userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
