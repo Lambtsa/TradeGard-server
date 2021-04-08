@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const api = require('./src/routes');
 
 const app = express();
@@ -8,6 +9,7 @@ const allowedOrigin = process.env.NODE_ENV === 'production'
   ? 'https://gallant-jang-0d3bdd.netlify.app'
   : 'http://localhost:3000';
 
+app.use(helmet());
 app.use(express.json());
 app.use(cors({ origin: allowedOrigin }));
 app.use('/api', api);
