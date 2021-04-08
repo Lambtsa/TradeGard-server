@@ -11,60 +11,55 @@ const {
 
 router.get('/', authenticateUser, async (req, res, next) => {
   try {
-    let items;
-    let contactDetails;
+    const responseObject = {
+      userLikedItems: [],
+    };
     if (req.query.userId) {
-      items = await getItemsByUserId(req.query.userId);
-      contactDetails = await getContactDetails(req.query.userId).then(response => response.json());
+      const ownerItems = await getItemsByUserId(req.query.userId);
+      responseObject.items = ownerItems;
+      const itemsOwnerContactDetails = await getContactDetails(req.query.userId)
+        .then(response => response.json());
+      responseObject.ownerDisplayName = itemsOwnerContactDetails.profile.nickName;
     } else {
-      items = await getAllItems();
+      responseObject.items = await getAllItems();
     }
-    let userLikedItems = [];
     if (req.jwt) {
       const retrievedLikes = await getUserLikes(req.jwt.claims.uid);
-      userLikedItems = retrievedLikes;
+      responseObject.userLikedItems = retrievedLikes;
     }
-    res.json({
-      items,
-      userLikedItems,
-      ownerDisplayName: contactDetails ? contactDetails.profile.nickName : '',
-    });
+    res.json(responseObject);
   } catch (error) {
     next(error);
   }
 });
 
-router.get('/:id', authenticateUser, async (req, res, next) => {
+router.get('/:itemId', authenticateUser, async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const item = await getItemById(id);
+    const responseObject = {
+      userLikedItems: [],
+    };
+    const { itemId } = req.params;
+    const item = await getItemById(itemId);
     if (item === null) {
-      throw new Error(`The item with the id:${id} does not exist`);
+      throw new Error(`The item with the id:${itemId} does not exist`);
     }
-    let userLikedItems = [];
+    responseObject.item = item;
     if (req.jwt) {
       const retrievedLikes = await getUserLikes(req.jwt.claims.uid);
-      userLikedItems = retrievedLikes;
+      responseObject.userLikedItems = retrievedLikes;
     }
-    const itemOwnerResponse = await getContactDetails(item.itemOwner);
-    const contactDetails = await itemOwnerResponse.json();
-    const responseObj = {
-      itemCategory: item.itemCategory,
-      itemLocation: item.itemLocation,
-      itemCreationDateUTC: item.itemCreationDateUTC,
-      itemDescription: item.itemDescription,
-      itemTitle: item.itemTitle,
-      itemOwner: {
-        userId: contactDetails.id,
-        userDisplayName: contactDetails.profile.nickName,
-        userEmail: contactDetails.profile.email,
-        userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
-      },
-      itemLikes: item.itemLikes,
-      itemImages: item.itemImages,
-      userLikedItems,
+    const oktaResponse = await getContactDetails(item.itemOwner);
+    if (!oktaResponse.ok) {
+      throw new Error('There has been an error with Okta');
+    }
+    const contactDetails = await oktaResponse.json();
+    responseObject.itemOwner = {
+      userId: contactDetails.id,
+      userDisplayName: contactDetails.profile.nickName,
+      userEmail: contactDetails.profile.email,
+      userTelephone: contactDetails.profile.mobilePhone ? contactDetails.profile.mobilePhone : '',
     };
-    res.json(responseObj);
+    res.json(responseObject);
   } catch (err) {
     err.statusCode = 404;
     next(err);
@@ -84,7 +79,6 @@ router.put('/:id', authenticationRequired, async (req, res, next) => {
       res.status(204).end();
     }
   } catch (err) {
-    console.log(err.message);
     next(err);
   }
 });
