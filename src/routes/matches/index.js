@@ -46,7 +46,6 @@ router.get('/', authenticationRequired, async (req, res, next) => {
           });
         }
       });
-
       return {
         id: itemOwner,
         likes: likeCount,
