@@ -35,7 +35,7 @@
     "node-fetch": "^2.6.1"
   },
   "scripts": {
-    "start": "NODE_ENV=production node",
+    "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon",
     "lint": "eslint .",
     "test": "jest"
