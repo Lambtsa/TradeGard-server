@@ -4,7 +4,10 @@ const api = require('./src/routes');
 
 const app = express();
 
-const allowedOrigin = 'http://localhost:3000';
+const allowedOrigin = process.env.NODE_ENV === 'production'
+  ? 'https://gallant-jang-0d3bdd.netlify.app'
+  : 'http://localhost:3000';
+
 app.use(express.json());
 app.use(cors({ origin: allowedOrigin }));
 app.use('/api', api);
