@@ -6,7 +6,7 @@ const api = require('./src/routes');
 const app = express();
 
 const allowedOrigin = process.env.NODE_ENV === 'production'
-  ? 'https://gallant-jang-0d3bdd.netlify.app'
+  ? 'https://tradegard.netlify.app/'
   : 'http://localhost:3000';
 
 app.use(helmet());
